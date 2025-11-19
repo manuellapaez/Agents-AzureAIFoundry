@@ -80,6 +80,9 @@ Interpret emails reporting product stockouts at retail points of sale and recomm
 
 ``gpt.4o.mini (version: 2024/07/18)``
 
+### Configuration Note
+
+> ⚠️ Replace `<your-resource-name>`, `<your-project-name>`, and `<your-agent-id>` in `agent_client.py` with your actual Azure AI Foundry configuration before running.
 
 ### Knowledge Sources
 - List of clients with automatic stockout replenishment service
@@ -175,4 +178,5 @@ This project is for educational and demonstration purposes only. It is not inten
 Contributions are welcome! Please open issues or pull requests for bug fixes, enhancements, or new features.
 
 For questions or support, please contact me.
+
 **Manuella Paez**
