@@ -42,7 +42,7 @@ Set up OAuth2 credentials and ensure the following scopes are granted:
 
 
 ### 2. Run the Email Reader
-⚠️ Replace YOUR_CLIENT_ID, YOUR_TENANT_ID, and YOUR_FOLDER_ID with your actual credentials before running.
+⚠️ Replace YOUR_CLIENT_ID, YOUR_TENANT_ID and YOUR_FOLDER_ID with your actual credentials before running.
 
 ```email_reader.py```
 
@@ -67,8 +67,7 @@ The agent returns a structured JSON like:
 ```
 
 The system then:
-- Logs the event in ``dados_ruptura.db``
-  
+- Logs the event in a local database for audit and analysis
 - Sends an alert email via Microsoft Graph in case of recurring events
 - Simulates an API demand creation for clients with automatic stockout replenishment service
 
@@ -90,6 +89,11 @@ Interpret emails reporting product stockouts at retail points of sale and recomm
 - List of account managers' emails for proactive contact in case of recurring events
 - Example instruction for expected JSON output
 - Business rules and operational guidelines
+
+### LGPD (General Data Protection Law)
+> This project handles sensitive information such as client names, email addresses, and store locations.  
+> To comply with data protection regulations, the actual `.txt` knowledge files containing personal data are **not included** and will **not be versioned** in this repository.  
+> Instead, a simplified example file is provided for demonstration purposes, containing only fictitious or anonymized data.
 
 ### System Instructions
 The agent is instructed to:
