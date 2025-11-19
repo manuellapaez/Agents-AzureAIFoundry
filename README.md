@@ -157,7 +157,7 @@ OAuth2 Scopes
 This project is for educational and demonstration purposes only. It is not intended for production use without further development, testing, and security review.
 
 ## Contributions and contact
-Contributions are welcome! Please open issues or pull requests for bug fixes, enhancements, or new
-features.
+Contributions are welcome! Please open issues or pull requests for bug fixes, enhancements, or new features.
+
 For questions or support, please contact me.
 **Manuella Paez**
