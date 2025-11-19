@@ -42,11 +42,15 @@ Set up OAuth2 credentials and ensure the following scopes are granted:
 
 
 ### 2. Run the Email Reader
+⚠️ Replace YOUR_CLIENT_ID, YOUR_TENANT_ID, and YOUR_FOLDER_ID with your actual credentials before running.
 
-```python email_reader.py```
+```email_reader.py```
 
 
 This will read incoming emails, extract content, mark as read, and forward to the rupturapdv agent.
+> 📂 Note: The agent is configured to read emails exclusively from a dedicated folder named **Rupturas**.  
+> This folder should contain only stockout-related messages to ensure accurate parsing and action triggering.  
+> Emails outside this context may lead to irrelevant or failed agent responses.
 
 ### 3. Agent Response and Action Execution
 The agent returns a structured JSON like:
@@ -148,6 +152,17 @@ OAuth2 Scopes
 - time: Delay handling
 - re: Regular expressions for parsing
 
+## Mapped Improvements
+The following enhancements have been identified for future iterations:
+
+- **Dynamic Folder Detection**: Replace hardcoded folder ID with automatic lookup by name or metadata.
+- **Environment Variable Support**: Move sensitive credentials and configuration to `.env` files for better security.
+- **Error Handling**: Improve resilience against malformed emails, empty fields, or failed API responses.
+- **Multi-Agent Support**: Extend architecture to support multiple agents for different business contexts.
+- **Dashboard Integration**: Visualize rupture events and agent responses in a web-based dashboard.
+- **Real API Integration**: Replace simulated demand creation with live integration to the Promotor API.
+- **Unit Tests**: Add automated tests for email parsing, agent communication, and action execution.
+  
 ## Acknowledgements
 - Built on Microsoft Azure AI Foundry
 - Utilizes Microsoft Graph API for email handling
