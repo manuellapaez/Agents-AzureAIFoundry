@@ -5,7 +5,7 @@ from agent_client import enviar_para_agente  # integração com o agente
 # Configurações do app registrado
 CLIENT_ID = "<your-client-id>" # Inserir seu Client_ID
 TENANT_ID = "<your-tenant-id>" # Inserir seu Tenent_ID
-AUTHORITY = "https://login.microsoftonline.com/consumers"
+AUTHORITY = "https://login.microsoftonline.com/consumers" # ou "organizations" se for corporativo
 SCOPES = ["Mail.ReadWrite"]  # write necessário para marcar como lido
 
 # Autenticação interativa
@@ -16,7 +16,7 @@ if "access_token" not in result:
     print("❌ Falha na autenticação.")
     exit()
 
-access_token = result["access_token"]
+access_token = result["access_token"] # use_your_access_token
 
 # Cabeçalhos para requisições
 headers = {
