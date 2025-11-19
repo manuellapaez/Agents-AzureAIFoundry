@@ -68,30 +68,30 @@ The system then:
 - Sends an alert email via Microsoft Graph in case of recurring events
 - Simulates an API demand creation for clients with automatic stockout replenishment service
 
-### Agent Configuration: rupturapdv (Azure AI Foundry)
-#### Objective
+## Agent Configuration: rupturapdv (Azure AI Foundry)
+### Objective
 Interpret emails reporting product stockouts at retail points of sale and recommend corrective actions based on business rules and context.
 
-#### LLM Model
+### LLM Model
 
 ``gpt.4o.mini (version: 2024/07/18)``
 
 
-#### Knowledge Sources
+### Knowledge Sources
 - List of clients with automatic stockout replenishment service
 - List of point-of-sale (PoS) addresses
 - List of account managers' emails for proactive contact in case of recurring events
 - Example instruction for expected JSON output
 - Business rules and operational guidelines
 
-#### System Instructions
+### System Instructions
 The agent is instructed to:
 - Extract fields such as PoS name, product, client, and stockout occurrence
 - Return structured JSON with recommended actions
 - Justify each action and specify the execution channel
 - Prioritize actions based on client data and business rules
 
-#### Validation
+### Validation
 Tested with:
 - AI Playgrounds
 - Short, direct emails
@@ -99,7 +99,7 @@ Tested with:
 - Multiple products affected
 - Clients with and without replenishment service
 
-### Visual Schema
+## Visual Schema
 This diagram illustrates the end-to-end flow of the rupturapdv agent, from email ingestion to action execution:
 - **Email Received** → via Microsoft Graph API
 - **Email Parsed** → agent extracts structured data
@@ -109,7 +109,7 @@ This diagram illustrates the end-to-end flow of the rupturapdv agent, from email
 
 See diagram below for a visual overview of the system architecture.
 
-### Screenshots
+## Screenshots
 
 **1. Agent setup (instructions, description and knowledge source)**
 
@@ -120,12 +120,12 @@ See diagram below for a visual overview of the system architecture.
 **4. Email alert sent via Microsoft Graph**
 
 
-### Security and Permissions
+## Security and Permissions
 OAuth2 Scopes
 - Mail.ReadWrite: Read and send emails, and mark them as read
 - Mail.Send: Send alert emails on behalf of the user
 
-### Network and APIs
+## Network and APIs
 - All external communication occurs over port 443 (HTTPS)
 - Integrates with:
   - Microsoft Graph API
@@ -135,7 +135,7 @@ OAuth2 Scopes
 - The agent runs as a local script and communicates exclusively with external APIs over HTTPS
 - All communication is encrypted and authenticated
 
-### Dependencies
+## Dependencies
 - azure-ai-projects: Azure AI Foundry SDK
 - msal: Microsoft Authentication Library
 - requests: HTTP client for API simulation
