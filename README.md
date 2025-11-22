@@ -57,13 +57,28 @@ The agent returns a structured JSON like:
 
 ```
 {
-  "Nome do PDV": "Supermercado Central",
-  "Produto afetado": "Leite Integral",
-  "Nome do cliente": "Cliente XYZ",
-  "E-mail do gerente da conta": "gerente@xyz.com",
-  "Conteúdo do e-mail para o gerente": "Olá, identificamos ruptura...",
-  "Ações recomendadas": ["Registrar evento de ruptura", "Enviar email alerta"]
-}
+    "Nome do PDV": "Central Market - Unidade BH",
+    "Endereço do PDV": "Rua XYZ",
+    "Produto afetado": "Detergente",
+    "Nome do cliente": "Empresa 1",
+    "Cliente possui serviço de reposição": "Sim",
+    "E-mail do gerente da conta": "gerente@empresa1.com",
+    "Ações recomendadas": [
+      "Registrar evento de ruptura",
+      "Enviar email alerta",
+      "Criar demanda via API para promotor"
+    ],
+    "Justificativas": {
+      "Registrar evento de ruptura": "O produto está em falta e precisa ser registrado para análise futura.",
+      "Enviar email alerta": "Foi verificada recorrência de ruptura de produto e o gerente precisa ser notificado.",
+      "Criar demanda via API para promotor": "A loja está sem estoque e precisa de reposição."
+    },
+    "Canais de execução": {
+      "Registrar evento de ruptura": "banco de dados",
+      "Enviar email alerta": "e-mail",
+      "Criar demanda via API para promotor": "API"
+    }
+  }
 ```
 
 The system then:
@@ -101,6 +116,27 @@ The agent is instructed to:
 - Return structured JSON with recommended actions
 - Justify each action and specify the execution channel
 - Prioritize actions based on client data and business rules
+
+### Data Integrity Rules
+To ensure correct recurrence analysis, the store name (PoS) must always be unique and distinct across the database.
+- Never reuse the same store name for different PoS entries.
+- If two stores belong to the same client, use a clear naming convention (e.g., include neighborhood, branch number, or internal code).
+#### Analysis Key Structure
+The agent uses the following combination as the unique key for recurrence checks:
+- Product (SKU)
+- Client
+- Store Name (PoS)
+
+This ensures that recurrence is only detected when the same SKU, client, and store are involved.
+
+Correct Example:
+- `Central Supermarket - Downtown Branch`
+  
+- `Central Supermarket - South Zone Branch`
+  
+Incorrect Example (not allowed):
+- `Central Supermarket` (used for more than one branch)
+
 
 ### Validation
 Tested with:
