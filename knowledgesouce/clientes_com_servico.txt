@@ -1,0 +1,8 @@
+Clientes com serviço de reposição contratado:
+Empresa 1
+Empresa 2
+Empresa 5
+
+Clientes sem serviço de reposição contratado:
+Empresa 3
+Empresa 4

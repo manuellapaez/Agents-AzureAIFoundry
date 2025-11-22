@@ -1,0 +1,45 @@
+[
+  {
+    "Nome do PDV": "Central Mercadoteca",
+    "Endereço do PDV": "Rua XYZ",
+    "Produto afetado": "Detergente",
+    "Nome do cliente": "Empresa 1",
+    "Cliente possui serviço de reposição": "Sim",
+    "E-mail do gerente da conta": "gerente@empresa1.com",
+    "Ações recomendadas": [
+      "Registrar evento de ruptura",
+      "Enviar email alerta",
+      "Criar demanda via API para promotor"
+    ],
+    "Justificativas": {
+      "Registrar evento de ruptura": "O produto está em falta e precisa ser registrado para análise futura.",
+      "Enviar email alerta": "Foi verificada recorrência de ruptura de produto e o gerente precisa ser notificado.",
+      "Criar demanda via API para promotor": "A loja está sem estoque e precisa de reposição."
+    },
+    "Canais de execução": {
+      "Registrar evento de ruptura": "banco de dados",
+      "Enviar email alerta": "e-mail",
+      "Criar demanda via API para promotor": "API"
+    }
+  },
+  {
+    "Nome do PDV": "Mercado Central",
+    "Endereço do PDV": "Rua ABC",
+    "Produto afetado": "Arroz",
+    "Nome do cliente": "Empresa 3",
+    "Cliente possui serviço de reposição": "Não",
+    "E-mail do gerente da conta": "gerente@empresa3.com",
+    "Ações recomendadas": [
+      "Registrar evento de ruptura",
+      "Enviar email alerta"
+    ],
+    "Justificativas": {
+      "Registrar evento de ruptura": "O produto está em falta e precisa ser registrado para análise futura.",
+      "Enviar email alerta": "O cliente não possui serviço de reposição, mas o gerente deve ser informado (recorrência de ruptura detectada)."
+    },
+    "Canais de execução": {
+      "Registrar evento de ruptura": "banco de dados",
+      "Enviar email alerta": "e-mail"
+    }
+  }
+]
