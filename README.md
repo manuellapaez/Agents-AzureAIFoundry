@@ -148,12 +148,15 @@ This diagram illustrates the end-to-end flow of the rupturapdv agent, from email
 ## Screenshots
 Please see screenshots illustrating the agent in the ``assets/`` folder of this repository. Some examples below:
 1. **Agent setup** – instructions, description, and knowledge sources
+
 📂 Path: [Agent Setup](assets/ConfigAgent.png)
 
 2. Agent response
+
 📂 Path: [Structured JSON output](assets/playgroundJSON.png)
 
 3. Stockout event – logged in SQLite
+
 📂 Path: [Local Database Example](assets/localdbexample.png)
 
 ## Security and Permissions
