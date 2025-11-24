@@ -1,25 +1,22 @@
-Versão refinada das regras de decisão
+Regras de decisão
 1. Registro obrigatório
-- Ação: Sempre registrar o evento de ruptura na base de dados rupturas.
-- Campos mínimos: produto, cliente, loja, endereço, data, e-mail do gerente.
-- Objetivo: garantir histórico completo para análises futuras.
-- Observação técnica: se algum campo vier vazio, registrar mesmo assim, mas marcar como NULL para não perder o evento.
+- Sempre registrar o evento de ruptura na base de dados rupturas.
+- Campos: produto, cliente, loja, endereço, data, e-mail do gerente.
+- Se algum campo vier vazio, registrar mesmo assim, mas marcar como NULL para não perder o evento.
+- Em caso de campos ausentes, não acionar promotor nem enviar alerta.
 
 2. Verificação de serviço contratado
-- Fonte: arquivo de conhecimento clientes_com_servico.
-- Condição:
+- Fonte: arquivo clientes_com_servico.
 - Se "Cliente possui serviço de reposição" = "Sim" → acionar promotor via API (criar_demanda_promotor).
-- Se "Cliente possui serviço de reposição" = "Não" → não acionar promotor, apenas seguir com registro e alerta.
-- Objetivo: diferenciar clientes com contrato ativo de reposição dos que não possuem.
-- Observação técnica: se o campo não estiver presente ou vier inválido, assumir "Não" por padrão.
+- Se "Cliente possui serviço de reposição" = "Não" → não acionar promotor.
+- Se o campo não estiver presente ou vier inválido, assumir "Não" por padrão.
 
-3. Análise de recorrência
+3. Análise de recorrência frequente
 - Fonte: base de dados rupturas.
-- Condição:
-- Consultar rupturas do mesmo SKU (produto específico), para o mesmo cliente e no mesmo PDV, nos últimos 30 dias.
-- Se count>=2 → marcar como recorrência frequente.
-- Nova condição:
+- Consultar se houve ruptura do mesmo produto, cliente e PDV nos últimos 15 dias.
+- Se count >= 2 → marcar como recorrência frequente.
 - Se recorrência frequente for detectada → enviar alerta ao gerente regional responsável (enviar_alerta_gerente).
-- Mensagem mínima: incluir SKU/produto, cliente, PDV, histórico de ocorrências e justificativa.
-- Objetivo: garantir que gestores regionais sejam informados de problemas persistentes e específicos, evitando confusão entre SKUs diferentes.
-- Observação técnica: a consulta deve considerar a data de cada ruptura registrada (data), filtrando por >= date('now'>'-30 day').
+- Mensagem mínima: incluir produto, cliente, nome e endereço do PDV.
+- Objetivo: garantir que gestores regionais sejam informados de problemas persistentes e específicos.
+- Observação técnica: usar SQL correto → `WHERE data >= date('now','-15 day')`.
+
