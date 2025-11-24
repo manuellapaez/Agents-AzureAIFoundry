@@ -1,5 +1,4 @@
-[
-  {
+{
     "Nome do PDV": "Central Mercadoteca",
     "Endereço do PDV": "Rua XYZ",
     "Produto afetado": "Detergente",
@@ -21,7 +20,9 @@
       "Enviar email alerta": "e-mail",
       "Criar demanda via API para promotor": "API"
     }
-  },
+  }
+
+
   {
     "Nome do PDV": "Mercado Central",
     "Endereço do PDV": "Rua ABC",
@@ -35,11 +36,51 @@
     ],
     "Justificativas": {
       "Registrar evento de ruptura": "O produto está em falta e precisa ser registrado para análise futura.",
-      "Enviar email alerta": "O cliente não possui serviço de reposição, mas o gerente deve ser informado (recorrência de ruptura detectada)."
+      "Enviar email alerta": "Foi verificada recorrência de ruptura de produto e o gerente precisa ser notificado."
     },
     "Canais de execução": {
       "Registrar evento de ruptura": "banco de dados",
       "Enviar email alerta": "e-mail"
     }
   }
-]
+
+
+  {
+    "Nome do PDV": "Supermercado Aurora",
+    "Endereço do PDV": "Av. das Palmeiras, 45 - Centro, Niterói - RJ",
+    "Produto afetado": "Leite Integral 1L",
+    "Nome do cliente": "Empresa 2",
+    "Cliente possui serviço de reposição": "Sim",
+    "E-mail do gerente da conta": "gerente@empresa2.com",
+    "Ações recomendadas": [
+      "Registrar evento de ruptura",
+      "Criar demanda via API para promotor"
+    ],
+    "Justificativas": {
+      "Registrar evento de ruptura": "O produto está em falta e precisa ser registrado para análise futura.",
+      "Criar demanda via API para promotor": "A loja está sem estoque e precisa de reposição."
+    },
+    "Canais de execução": {
+      "Registrar evento de ruptura": "banco de dados",
+      "Criar demanda via API para promotor": "API"
+    }
+  }
+
+
+  {
+    "Nome do PDV": "Mini Mercado Sol",
+    "Endereço do PDV": "Rua das Laranjeiras, 210 - São Paulo - SP",
+    "Produto afetado": "Macarrão Espaguete 500g",
+    "Nome do cliente": "Empresa 4",
+    "Cliente possui serviço de reposição": "Não",
+    "E-mail do gerente da conta": "gerente@empresa4.com",
+    "Ações recomendadas": [
+      "Registrar evento de ruptura"
+    ],
+    "Justificativas": {
+      "Registrar evento de ruptura": "O produto está em falta e precisa ser registrado para análise futura."
+    },
+    "Canais de execução": {
+      "Registrar evento de ruptura": "banco de dados"
+    }
+  }
