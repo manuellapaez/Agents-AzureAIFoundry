@@ -3,7 +3,7 @@ import json
 from azure.identity import DefaultAzureCredential
 from azure.ai.projects import AIProjectClient
 from azure.ai.agents.models import ListSortOrder
-from actions import registrar_ruptura, enviar_alerta_gerente, criar_demanda_promotor
+from actions import registrar_ruptura, enviar_alerta_gerente, criar_demanda_promotor, verificar_recorrencia
 
 # Conectar ao projeto da Fábrica de IA (substitua pelo end point real)
 project = AIProjectClient(
@@ -32,49 +32,74 @@ def enviar_para_agente(assunto: str, corpo: str, remetente: str = None, access_t
     print("✉️ Mensagem enviada ao agente.")
 
     # Criar e processar run
-    run = project.agents.runs.create(thread_id=thread.id, agent_id=agent.id)
+    run = project.agents.runs.create_and_process(thread_id=thread.id, agent_id=agent.id)
     print(f"🚀 Run iniciado: {run.id}")
 
-    # Aguardar finalização
-    while run.status in ["queued", "in_progress"]:
-        time.sleep(1)
-        run = project.agents.runs.get(thread_id=thread.id, run_id=run.id)
-
-    # Obter resposta
+    if run.status == "failed":
+        dados = {
+            "status": "alerta incompleto",
+            "motivo": f"Run terminou com status {run.last_error}"
+        }
+        print(f"⚠️ Run não finalizou com sucesso. Retornando alerta incompleto.")
+        return dados
+        
+    # Obter resposta do agente
     messages = project.agents.messages.list(thread_id=thread.id, order=ListSortOrder.ASCENDING)
-    resposta = None
+    resposta_json = None
+
     for msg in messages:
         if msg.text_messages:
-            resposta = msg.text_messages[-1].text.value
+            texto = msg.text_messages[-1].text.value.strip()
 
-    if not resposta:
-        print("⚠️ Nenhuma resposta recebida do agente.")
-        return None
+            # Se vier com bloco ```json ... ```
+            if texto.startswith("```"):
+                inicio = texto.find("\n")
+                fim = texto.rfind("```")
+                if inicio != -1 and fim != -1:
+                    texto = texto[inicio+1:fim].strip()
 
-    print("\n📦 Resposta do agente:")
-    print(resposta)
+            # Tentar interpretar como JSON
+            try:
+                resposta_json = json.loads(texto)
+                break  # achou JSON válido, não precisa continuar
+            except json.JSONDecodeError:
+                continue
 
-    # Tentar interpretar como JSON
-    try:
-        dados = json.loads(resposta)
-    except json.JSONDecodeError:
-        print("❌ Resposta não está em formato JSON estruturado.")
-        return resposta
+    if not resposta_json:
+        print("⚠️ Nenhuma resposta JSON válida recebida do agente.")
+        return {"status": "alerta incompleto", "motivo": "Agente não retornou JSON"}
 
-    # Executar ações recomendadas
-    acoes = dados.get("Ações recomendadas", [])
-    print("\n🔧 Executando ações:")
-    for acao in acoes:
+    print("\n📦 Resposta do agente (JSON):")
+    print(json.dumps(resposta_json, indent=2, ensure_ascii=False))
+
+    # Executar regras de decisão
+    print("\n🔧 Ações recomendadas pelo agente:")
+    canais = resposta_json.get("Canais de execução", {})
+
+    for acao in resposta_json.get("Ações recomendadas", []):
+        canal = canais.get(acao, "Canal desconhecido")
+        print(f"- {acao} → {canal}")
+
+    print("\n⚙️ Executando ações:")
+    for acao in resposta_json.get("Ações recomendadas", []):
         if acao == "Registrar evento de ruptura":
-            print(registrar_ruptura(dados))
-        elif acao == "Enviar email alerta":
-            print(enviar_alerta_gerente(dados, access_token))
+            registrar_ruptura(resposta_json)
         elif acao == "Criar demanda via API para promotor":
-            print(criar_demanda_promotor(dados))
-        else:
-            print(f"⚠️ Ação não reconhecida: {acao}")
+            criar_demanda_promotor(resposta_json)
+        elif acao == "Enviar email alerta":
+            if verificar_recorrencia(resposta_json["Produto afetado"], resposta_json["Nome do cliente"], resposta_json["Nome do PDV"]):
+                enviar_alerta_gerente(resposta_json, access_token)
+            else:
+                print("Alerta não enviado: sem recorrência registrada.")
 
-    return resposta
+    # 🔧 Regra híbrida: alerta disparado pelo código mesmo sem recomendação explícita
+    if verificar_recorrencia(
+        resposta_json["Produto afetado"],
+        resposta_json["Nome do cliente"],
+        resposta_json["Nome do PDV"]
+    ):
+        enviar_alerta_gerente(resposta_json, access_token)
 
+    return resposta_json
 
-#Fim do arquivo agent_client.py
+# Fim do arquivo agent_client.py
