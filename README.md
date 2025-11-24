@@ -1,38 +1,30 @@
 # Agents-AzureAIFoundry
-Intelligent agent framework built on Microsoft Azure AI Foundry. This repository hosts the *rupturapdv* project, featuring a single active agent designed to detect and respond to product stockouts in retail locations by parsing emails, extracting structured data, and triggering automated actions.
+**Intelligent agent framework built on Microsoft Azure AI Foundry.** 
+
+This repository hosts the *rupturapdv* project, featuring a single active agent designed to detect and respond to product stockouts in retail locations by parsing emails, extracting structured data, and triggering automated actions.
 
 ## Features
-- **AI-Powered Email Parsing:** Uses the agent to extract rupture data from unstructured email content.
-- **Structured JSON Output:** Agent returns a consistent schema with fields like PDV, product, client, and recommended actions.
+- **AI-Powered Email Parsing:** Agent extracts rupture data from unstructured email content.
+- **Structured JSON Output:** Returns a consistent schema with fields like PDV, product, client, and recommended actions.
 - **Automated Action Execution:** Executes actions such as database logging, email alerts, and API calls based on agent output.
 - **Microsoft Graph Integration:** Secure email reading and dispatch using OAuth2 and Graph API.
-- **SQLite Persistence:** Local database stores rupture events for audit and analysis.
+- **SQLite Persistence:** Local database stores rupture events for analysis.
 - **API Simulation (placeholder):** Demand creation is currently mocked for testing purposes until the real API is available.
+- **Hybrid Recurrence Rule:** Even if the agent does not recommend, the code triggers alerts when recurrence is detected locally.
 
 ## Installation
-### Dependencies and Foundations
+### Dependencies
 
-This project builds on the following technologies and requirements:
-
-- **Python 3.11+**: Core language for agent logic and orchestration
-- **Microsoft Graph API**: Secure email access, dispatch, and event handling
-- **Azure AI Foundry**: Agent orchestration and knowledge integration (agent: *rupturapdv*)
-- **SQLite**: Lightweight local persistence (included by default)
-- **Microsoft 365 account**: Required for Graph API access
-- **RESTful API principles**: Used for future demand integration
-
-### Setup
-This repository assumes familiarity with Python environments, Azure AI Foundry, and Microsoft Graph. For this reason, no installation instructions are provided.
-All required dependencies are declared within the source files, and all relevant information about the solution is documented below.
+- Python 3.11+
+- Microsoft Graph API (OAuth2)
+- Azure AI Foundry (agent: *rupturapdv*)
+- SQLite (included by default)
+- Microsoft 365 account (for Graph API access)
 
 ### Development Environment
-This project was developed and tested using:
+
 - Visual Studio Code (v1.106.0)
 - Python 3.14.0
-- Azure AI Foundry (via web interface)
-- Microsoft Graph API (via registered Azure application)
-
-All scripts were executed locally using VS Code's integrated terminal and debugger.
 
 ## Usage
 ### 1. Configure Microsoft Graph Autentication
@@ -42,14 +34,17 @@ Set up OAuth2 credentials and ensure the following scopes are granted:
 
 
 ### 2. Run the Email Reader
-⚠️ Replace YOUR_CLIENT_ID, YOUR_TENANT_ID and YOUR_FOLDER_ID with your actual credentials before running.
+Execute:
 
 ```email_reader.py```
 
-
-This will read incoming emails, extract content, mark as read, and forward to the rupturapdv agent.
-> 📂 Note: The agent is configured to read emails exclusively from a dedicated folder named **Rupturas**.  
-> This folder should contain only stockout-related messages to ensure accurate parsing and action triggering.  
+⚠️ Replace ``YOUR_CLIENT_ID``, ``YOUR_TENANT_ID`` and ``YOUR_FOLDER_ID`` with your actual credentials.
+This script:
+- Reads unread emails from the **Rupturas** folder.
+- Extracts content and forwards it to the agent.
+- Marks emails as read after processing.
+  
+> 📂 Note: The **Rupturas** folder should contain only stockout-related messages to ensure accurate parsing and action triggering.
 > Emails outside this context may lead to irrelevant or failed agent responses.
 
 ### 3. Agent Response and Action Execution
@@ -82,33 +77,36 @@ The agent returns a structured JSON like:
 ```
 
 The system then:
-- Logs the event in a local database for audit and analysis
-- Sends an alert email via Microsoft Graph in case of recurring events
-- Simulates an API demand creation for clients with automatic stockout replenishment service
+- Logs the event in a local SQLite database for recurrence analysis
+- Simulates an alert notification to the account manager if recurrence is detected (hybrid rule).
+- Simulates demand creation via API for clients with replenishment service.
 
-## Agent Configuration: rupturapdv (Azure AI Foundry)
-### Objective
-Interpret emails reporting product stockouts at retail points of sale and recommend corrective actions based on business rules and context.
-
-### LLM Model
-
-``gpt.4o.mini (version: 2024/07/18)``
+## Agent Configuration
+- **Agent name:** ``rupturapdv```
+- **Objective:** Interpret emails reporting product stockouts at retail points of sale and recommend corrective actions based on business rules and context.
+- **LLM Model:** ``gpt.4o.mini (version: 2024/07/18)``
+- **Knowledge Sources:**
+  The agent is configured with the following knowledge bases and references:
+    - **Clients with automatic stockout replenishment service**
+    Used to determine whether demand creation should be triggered automatically.
+    - **Point‑of‑sale (PoS) addresses**
+    Ensures correct identification of store locations and supports recurrence detection.
+    - **Account managers’ emails**
+    Enables proactive contact in case of recurring rupture events (currently simulated alerts).
+    - **Example JSON output instructions**
+    Provides schema guidance so the agent always returns structured, predictable fields.
+    - **Business rules and operational guidelines**
+    Defines when to log events, trigger alerts, or simulate demand creation, ensuring consistency with retail processes.
 
 ### Configuration Note
 
-> ⚠️ Replace `<your-resource-name>`, `<your-project-name>`, and `<your-agent-id>` in `agent_client.py` with your actual Azure AI Foundry configuration before running.
+⚠️ Replace `<your-resource-name>`, `<your-project-name>`, and `<your-agent-id>` in `agent_client.py` with your actual Azure AI Foundry configuration before running.
 
-### Knowledge Sources
-- List of clients with automatic stockout replenishment service
-- List of point-of-sale (PoS) addresses
-- List of account managers' emails for proactive contact in case of recurring events
-- Example instruction for expected JSON output
-- Business rules and operational guidelines
 
 ### LGPD (General Data Protection Law)
-> This project handles sensitive information such as client names, email addresses, and store locations.  
-> To comply with data protection regulations, the actual `.txt` knowledge files containing personal data are **not included** and will **not be versioned** in this repository.  
-> Instead, a simplified example file is provided for demonstration purposes, containing only fictitious or anonymized data.
+This project handles sensitive information such as client names, email addresses, and store locations.  
+To comply with data protection regulations, the actual `.txt` knowledge files containing personal data are not included and will not be versioned in this repository.  
+Instead, a simplified example file is provided for demonstration purposes, containing only fictitious or anonymized data.
 
 ### System Instructions
 The agent is instructed to:
@@ -118,82 +116,61 @@ The agent is instructed to:
 - Prioritize actions based on client data and business rules
 
 ### Data Integrity Rules
+- Recurrence is detected by the combination:
+    - Product
+    - Client
+    - Store (PoS) name
+
 To ensure correct recurrence analysis, the store name (PoS) must always be unique and distinct across the database.
 - Never reuse the same store name for different PoS entries.
 - If two stores belong to the same client, use a clear naming convention (e.g., include neighborhood, branch number, or internal code).
-#### Analysis Key Structure
-The agent uses the following combination as the unique key for recurrence checks:
-- Product (SKU)
-- Client
-- Store Name (PoS)
 
-This ensures that recurrence is only detected when the same SKU, client, and store are involved.
+**Examples:**
 
-Correct Example:
-- `Central Supermarket - Downtown Branch`
+✅ Correct:
+- ``Central Supermarket - Downtown Branch``
   
-- `Central Supermarket - South Zone Branch`
+- ``Central Supermarket - South Zone Branch``
   
-Incorrect Example (not allowed):
-- `Central Supermarket` (used for more than one branch)
-
-
-### Validation
-Tested with:
-- AI Playgrounds
-- Short, direct emails
-- Informal language
-- Multiple products affected
-- Clients with and without replenishment service
+❌ Incorrect (not allowed):
+- ``Central Supermarket (used for more than one branch)``
 
 ## Visual Schema
 This diagram illustrates the end-to-end flow of the rupturapdv agent, from email ingestion to action execution:
 - **Email Received** → via Microsoft Graph API
 - **Email Parsed** → agent extracts structured data
 - **Agent Response** → JSON with recommended actions
-- **Action Execution** → database logging, email alerts, API simulation
+- **Action Execution** → database logging, simulated alerts, API simulation
 - **Persistence & Audit** → rupture events stored in SQLite
 
-See diagram below for a visual overview of the system architecture.
+![Diagram Illustration](assets/architecture-diagram.png)
 
 ## Screenshots
+Please see screenshots illustrating the agent in the ``assets/`` folder of this repository. Some examples below:
+1. **Agent setup** – instructions, description, and knowledge sources
+📂 Path: [Agent Setup](assets/ConfigAgent.png)
 
-**1. Agent setup (instructions, description and knowledge source)**
+2. Agent response
+📂 Path: [Structured JSON output](assets/playground JSON.png)
 
-**2. Agent response with structured JSON**
-
-**3. Stockout event logged in SQLite**
-
-**4. Email alert sent via Microsoft Graph**
-
+3. Stockout event – logged in SQLite
+📂 Path: [Local Database Example](assets/localdbexample.png)
 
 ## Security and Permissions
 OAuth2 Scopes
-- Mail.ReadWrite: Read and send emails, and mark them as read
-- Mail.Send: Send alert emails on behalf of the user
+- Mail.ReadWrite: Read emails, and mark them as read
 
-## Network and APIs
-- All external communication occurs over port 443 (HTTPS)
-- Integrates with:
-  - Microsoft Graph API
-  - Azure AI Foundry API
-  - (Planned) Promotor API
-- No local ports are exposed
-- The agent runs as a local script and communicates exclusively with external APIs over HTTPS
-- All communication is encrypted and authenticated
+## Network
+- Communication only via HTTPS (port 443).
+- Integrates with Microsoft Graph and Azure AI Foundry.
+- Promoter API planned.
 
 ## Dependencies
-- azure-ai-projects: Azure AI Foundry SDK
-- msal: Microsoft Authentication Library
-- requests: HTTP client for API simulation
-- sqlite3: Local database engine
-- email.message: Email formatting
-- smtplib: (fallback, not used with Graph)
-- json: JSON parsing and formatting
-- logging: Application logging
-- datetime: Timestamping events
-- time: Delay handling
-- re: Regular expressions for parsing
+- ``azure-ai-projects``
+- ``msal``
+- ``sqlite3``
+- ``json``
+- ``datetime``, ``time``, ``logging``, ``re``
 
 ## Mapped Improvements
 The following enhancements have been identified for future iterations:
@@ -204,19 +181,18 @@ The following enhancements have been identified for future iterations:
 - **Multi-Agent Support**: Extend architecture to support multiple agents for different business contexts.
 - **Dashboard Integration**: Visualize rupture events and agent responses in a web-based dashboard.
 - **Real API Integration**: Replace simulated demand creation with live integration to the Promotor API.
+- **Alert Analysis by Agent**: Move beyond simulated alerts by allowing the agent to evaluate recurrence and decide when to notify account managers, integrating with Microsoft Graph for real email dispatch.
 - **Unit Tests**: Add automated tests for email parsing, agent communication, and action execution.
   
 ## Acknowledgements
-- Built on Microsoft Azure AI Foundry
-- Utilizes Microsoft Graph API for email handling
+- Built on **Microsoft Azure AI Foundry**  
+- Utilizes **Microsoft Graph API** for email handling
 - Inspired by real-world retail stockout management challenges
 
 ## Disclaimer
-This project is for educational and demonstration purposes only. It is not intended for production use without further development, testing, and security review.
+This project is educational and demonstrative. It is not intended for production use without further development, testing, and security review.
 
 ## Contributions and contact
-Contributions are welcome! Please open issues or pull requests for bug fixes, enhancements, or new features.
+Contributions are welcome! Open issues or pull requests for bug fixes, enhancements, or new features.
 
-For questions or support, please contact me.
-
-**Manuella Paez**
+**Contact:** Manuella Paez
