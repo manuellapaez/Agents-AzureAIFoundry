@@ -151,7 +151,7 @@ Please see screenshots illustrating the agent in the ``assets/`` folder of this 
 📂 Path: [Agent Setup](assets/ConfigAgent.png)
 
 2. Agent response
-📂 Path: [Structured JSON output](assets/playground JSON.png)
+📂 Path: [Structured JSON output](assets/playgroundJSON.png)
 
 3. Stockout event – logged in SQLite
 📂 Path: [Local Database Example](assets/localdbexample.png)
@@ -175,6 +175,7 @@ OAuth2 Scopes
 ## Mapped Improvements
 The following enhancements have been identified for future iterations:
 
+- **Automated Scheduling**: Enable the email reader routine to run automatically at defined intervals (e.g., via cron job, task scheduler, or background service), removing the need for manual execution.
 - **Dynamic Folder Detection**: Replace hardcoded folder ID with automatic lookup by name or metadata.
 - **Environment Variable Support**: Move sensitive credentials and configuration to `.env` files for better security.
 - **Error Handling**: Improve resilience against malformed emails, empty fields, or failed API responses.
