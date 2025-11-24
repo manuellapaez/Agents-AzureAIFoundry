@@ -52,7 +52,6 @@ while True:
 
         # Enviar para o agente
         resultado = enviar_para_agente(assunto, corpo, remetente, access_token)
-        print("🤖 Resposta do agente:", resultado)
 
         # Marcar como lido
         email_id = item["id"]
